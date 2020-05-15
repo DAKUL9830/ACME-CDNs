@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+
+   <script src ='https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.js'>
+</script>
+
+        <style>
+          
+        </style>
+    </head>
+    <body>
+        <h1>ACME CDN's</h1>
+        <div id='nav'></div>
+
+        <table id='table'></table>
+      
+        <script>
+          
+
+
+          /*  const table=document.querySelector('#table');
+            const nav=document.querySelector('#nav');
+            const COMPANIES_URL=`http://acme-users-api-rev.herokuapp.com/api/companies`;
+            const PRODUCTS_URL=`http://acme-users-api-rev.herokuapp.com/api/products`;
+
+            const COMPANIES=fetch(COMPANIES_URL);
+            const PRODUCTS=fetch(PRODUCTS_URL);
+            const allData=Promise.all([PRODUCTS,COMPANIES]);
+
+            allData.
+            then(response =>{
+                const prodResponse=response[0];
+                const compResponse=response[1];
+                return Promise.all([prodResponse.json(),compResponse.json()]);
+            }).then(JSONs=>{
+                const products=JSONs[0];
+                const companies=JSONs[1];
+                console.log(`products`,products);
+                console.log(`companies`,companies);
+            });*/
+
+            const API = 'https://acme-users-api-rev.herokuapp.com/api';
+const nav = document.querySelector('#nav');
+const table = document.querySelector('table');
+
+const allData = Promise.all([
+  axios.get(`${API}/companies`),
+  axios.get(`${API}/products`)
+])
+.then( responses => {
+  return responses.map(response => response.data);
+});
+               
+               /* app.innerHTML=`
+                <div class='tab'>
+                    <a href='products'>
+                    <button class='tablinks'>products(${productJsons.count})</button></a>
+                   <a href ='companies'> <button class='tablinks'>companies(${companyJsons.count})</button><a>
+                    
+                    
+                    </div>
+                <table class='table'>
+
+                <thead>
+                    <tr>
+                        <th>ID<th>
+                        <th>NAME<th>
+                         <th>DESCRIPTION<th>
+                         <th>SUGGESTEDPRICE<th>
+                         <th>CREATEDAT<th>
+                        <th>UPDATEDAT<th>
+                       
+                         <tbody>${productJsons.map(product=>{
+                             return `
+                             <tr>
+                                <td>${product.id}<td>
+                                <td>${product.name}<td>
+                                <td>${product.description}<td>
+                                <td>${product.suggestedPrice}<td>
+                                <td>${product.createdAt}<td>
+                                <td>${product.updatedAt}<td>
+                                </tr>
+                             `
+                         }).join('')}</tbody>   
+                        
+                    
+                    <thead>
+
+                        </table>`*/
+                       
+            
+            const render =async()=>{
+           
+            const hash= window.location.hash.slice(1);
+            const[products,companies]=await allData;
+            renderNav(hash,products,companies);
+            renderTable(hash==='companies' ? companies : products)
+
+            }
+            window.addEventListener('hashchange',render);
+
+            const renderNav=(hash,products,companies)=>{
+                nav.innerHTML=`
+                <div class='tab'>
+                    <a href='#products'>
+                    <button href='#products' class='tablinks${hash==='products'?'active':''}'>Products(${products.length})</button></a>
+                   <a href ='#companies'> <button href ='#companies' class='tablinks${hash==='companies'?'active':''}'>Companies(${companies.length})</button><a>
+                    
+                    
+                    </div>
+                    `;
+
+            }
+            const renderTable=(items)=>{
+             
+                const keys=Object.keys(items[0]);     //NOT WORKING OBJECT EXPECTED
+                let thead=keys.map(key=>{
+                    return `<th>${key}</th>`;
+                }).join('');
+                thead=`<thead>${thead}<thead>`;
+            
+               
+                     
+
+              
+                       
+                         let tbody=items.map(item=>{
+                             return `
+                             <tr>
+                                 ${keys.map(key=>{
+                                     return `
+                                     <td>${ item[key] }</td>`;
+                                 }).join('')}
+                                </tr>
+                             `;
+                         }).join(''); 
+                        
+                    
+                
+
+                       
+                      table.innerHTML=`${thead}${tbody}`;
+              
+                    }
+                   const hash= window.location.hash.slice(1);
+                   if(!hash){
+                       window.location.hash='products';
+                   }else{
+                       render();
+                   }
+
+                
+
+
+
+        </script>
+    </body>
+</html>
